@@ -23,7 +23,7 @@ namespace FlexHttpClient.Core.Basic
             this._timeout = timeout;
         }
 
-        public async Task<string> Get(string query = null)
+        public async Task<string> Get(string path, string query = null)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace FlexHttpClient.Core.Basic
 
                 var stream = _tcpClient.GetStream();
 
-                var request = GetRequest();
+                var request = GetRequest(path);
 
                 await WriteToStream(stream, request);
 
@@ -53,9 +53,9 @@ namespace FlexHttpClient.Core.Basic
             }
         }
 
-        private byte[] GetRequest()
+        private byte[] GetRequest(string path)
         {
-            var request = Encoding.UTF8.GetBytes(PrepareRequest());
+            var request = Encoding.UTF8.GetBytes(PrepareRequest(path));
             return request;
         }
 
@@ -84,10 +84,12 @@ namespace FlexHttpClient.Core.Basic
         }
 
 
-        private string PrepareRequest()
+        private string PrepareRequest(string path)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("GET /index.html HTTP/1.1");
+            stringBuilder.AppendLine($"GET /{path} HTTP/1.1");
+            stringBuilder.AppendLine($"HOST: {_host}");
+            stringBuilder.AppendLine($"User-Agent: flexhttp/0.1");
             stringBuilder.AppendLine();
 
             return stringBuilder.ToString();
