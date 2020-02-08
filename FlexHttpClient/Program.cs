@@ -13,7 +13,7 @@ namespace FlexHttpClient
             Task.Factory.StartNew(async () =>
             {
                 FlexClient client = new FlexClient("www.google.com");
-                await client.Get();
+                var result = await client.Get();
             });
 
             Console.ReadKey(true);
