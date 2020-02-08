@@ -23,31 +23,19 @@ namespace FlexHttpClient.Core.Basic
             this._timeout = timeout;
         }
 
-        public async Task<string> Get()
+        public async Task<string> Get(string query = null)
         {
             try
             {
                 _tcpClient.ConnectAsync(_host, _port).Wait(_timeout);
+
                 var stream = _tcpClient.GetStream();
 
-                var rawRequest = PrepareRequest();
+                var request = GetRequest();
 
-                var request = Encoding.UTF8.GetBytes(rawRequest);
+                await WriteToStream(stream, request);
 
-                ReadOnlyMemory<byte> readOnlyMemory = new Memory<byte>(request);
-
-                await stream.WriteAsync(readOnlyMemory);
-
-                byte[] buffer = new byte[256];
-                StringBuilder builder = new StringBuilder();
-
-                WaitForConnection(stream).Wait(_timeout);
-
-                while (stream.DataAvailable)
-                {
-                    var data  = await stream.ReadAsync(buffer);
-                    builder.Append(Encoding.UTF8.GetString(buffer,0,buffer.Length));
-                }
+                var builder = await ReadData(stream);
 
                 return builder.ToString();
             }
@@ -64,6 +52,37 @@ namespace FlexHttpClient.Core.Basic
                 await Task.Delay(100);
             }
         }
+
+        private byte[] GetRequest()
+        {
+            var request = Encoding.UTF8.GetBytes(PrepareRequest());
+            return request;
+        }
+
+        private async Task<StringBuilder> ReadData(NetworkStream stream)
+        {
+            byte[] buffer = new byte[256];
+            StringBuilder builder = new StringBuilder();
+
+            WaitForConnection(stream).Wait(_timeout);
+
+            while (stream.DataAvailable)
+            {
+                await stream.ReadAsync(buffer);
+                builder.Append(Encoding.UTF8.GetString(buffer, 0, buffer.Length));
+            }
+
+            return builder;
+        }
+
+
+        private async Task WriteToStream(NetworkStream stream, byte[] request)
+        {
+            ReadOnlyMemory<byte> readOnlyMemory = new Memory<byte>(request);
+
+            await stream.WriteAsync(readOnlyMemory);
+        }
+
 
         private string PrepareRequest()
         {
