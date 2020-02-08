@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHttpClient.Console", "FlexHttpClient\FlexHttpClient.Console.csproj", "{1FB0CEF8-6F62-4343-AB71-5188FC9344CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHttpClient.Core", "FlexHttpClient.Core\FlexHttpClient.Core.csproj", "{A78ADDC1-287B-4529-9DCB-15E776C2F15A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FB0CEF8-6F62-4343-AB71-5188FC9344CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FB0CEF8-6F62-4343-AB71-5188FC9344CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FB0CEF8-6F62-4343-AB71-5188FC9344CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FB0CEF8-6F62-4343-AB71-5188FC9344CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A78ADDC1-287B-4529-9DCB-15E776C2F15A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A78ADDC1-287B-4529-9DCB-15E776C2F15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A78ADDC1-287B-4529-9DCB-15E776C2F15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A78ADDC1-287B-4529-9DCB-15E776C2F15A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
