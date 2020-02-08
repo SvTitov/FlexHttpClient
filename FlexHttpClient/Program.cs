@@ -12,8 +12,8 @@ namespace FlexHttpClient
         {
             Task.Factory.StartNew(async () =>
             {
-                FlexClient client = new FlexClient("www.google.com");
-                var result = await client.Get("index.html");
+                FlexClient client = new FlexClient("www.openlibrary.org");
+                var result = await client.Get("api/books?bibkeys=ISBN:0201558025,LCCN:93005405");
             });
 
             Console.ReadKey(true);

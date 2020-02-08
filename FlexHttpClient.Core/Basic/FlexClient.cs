@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FlexHttpClient.Core.Basic
@@ -35,7 +36,7 @@ namespace FlexHttpClient.Core.Basic
 
                 await WriteToStream(stream, request);
 
-                var builder = await ReadData(stream);
+                var builder = await ReadData(_tcpClient, stream);
 
                 return builder.ToString();
             }
@@ -59,22 +60,24 @@ namespace FlexHttpClient.Core.Basic
             return request;
         }
 
-        private async Task<StringBuilder> ReadData(NetworkStream stream)
+        private async Task<StringBuilder> ReadData(TcpClient client, NetworkStream stream)
         {
-            byte[] buffer = new byte[256];
+            byte[] buffer = new byte[client.ReceiveBufferSize];
             StringBuilder builder = new StringBuilder();
 
             WaitForConnection(stream).Wait(_timeout);
 
             while (stream.DataAvailable)
             {
-                await stream.ReadAsync(buffer);
+                var readBytes = await stream.ReadAsync(buffer, 0, buffer.Length);
+                if (readBytes <= 0)
+                    break;
+
                 builder.Append(Encoding.UTF8.GetString(buffer, 0, buffer.Length));
             }
 
             return builder;
         }
-
 
         private async Task WriteToStream(NetworkStream stream, byte[] request)
         {
@@ -83,16 +86,21 @@ namespace FlexHttpClient.Core.Basic
             await stream.WriteAsync(readOnlyMemory);
         }
 
-
         private string PrepareRequest(string path)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"GET /{path} HTTP/1.1");
-            stringBuilder.AppendLine($"HOST: {_host}");
+            stringBuilder.AppendLine($"HOST: {RemoveDomain(_host)}");
             stringBuilder.AppendLine($"User-Agent: flexhttp/0.1");
+            stringBuilder.AppendLine("Accept: */*");
             stringBuilder.AppendLine();
 
             return stringBuilder.ToString();
+        }
+
+        private string RemoveDomain(string host)
+        {
+            return Regex.Replace(host, @"^(?:http(?:s)?://)?(?:www(?:[0-9]+)?\.)?", string.Empty, RegexOptions.IgnoreCase);
         }
     }
 }
